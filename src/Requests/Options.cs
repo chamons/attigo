@@ -10,6 +10,7 @@ namespace attigo.Requests
 	{
 		public string Repository = null;
 		public string Pat = null;
+		public int Days = 14;
 
 		public void Validate ()
 		{

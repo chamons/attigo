@@ -42,8 +42,21 @@ namespace attigo.Requests
 		{
 			var (owner, area) = ParseLocation (Options.Repository);
 
-			var allIssues = await Client.Issue.GetAllForRepository (owner, area, new RepositoryIssueRequest { State = ItemStateFilter.Open });
+			var issueRequest = new RepositoryIssueRequest { Filter = IssueFilter.All, State = ItemStateFilter.Open };
+			//var allIssues = await Client.Issue.GetAllForRepository (owner, area, issueRequest);
+			//var testIssue = allIssues.First (x => x.Number == 581);
+			//Console.WriteLine (testIssue.ToString ());
 
+			var timelineEventInfos = await Client.Issue.Timeline.GetAllForIssue (owner, area, 581);
+			foreach (var x in timelineEventInfos) {
+				if (x.Event.TryParse (out EventInfoState eventState)) {
+					switch (eventState) {
+					case EventInfoState.Crossreferenced:
+						Console.WriteLine ($"{x.Event.StringValue} {x.Source.Issue.Number}");
+						continue;
+					}
+				}
+			}
 		}
 	}
 }

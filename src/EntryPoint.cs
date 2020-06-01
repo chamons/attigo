@@ -18,6 +18,7 @@ namespace attigo
 			{
 				{ "r|repository=", "Github repository to consider.", b => options.Repository = b },
 				{ "t|token=", "Token to use to communicate with Github via OctoKit", t => options.Pat = t },
+				{ "d|days=", "Show mentions in last x Days (Default 14)", d => options.Days= Int32.Parse(d) },
 			};
 
 			try {
