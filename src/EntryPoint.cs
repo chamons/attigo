@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Mono.Options;
 
@@ -9,7 +10,7 @@ namespace attigo
 {
 	class EntryPoint
 	{
-		static void Main (string[] args)
+		static async Task Main (string[] args)
 		{
 			var options = new RequestOptions ();
 
@@ -27,6 +28,9 @@ namespace attigo
 			}
 
 			options.Validate ();
+
+			var issues = new Issues (options);
+			await issues.Find ();
 		}
 	}
 }
