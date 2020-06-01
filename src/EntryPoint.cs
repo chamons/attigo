@@ -14,9 +14,11 @@ namespace attigo
 		static async Task Main (string[] args)
 		{
 			var options = new RequestOptions ();
+			bool showHelp = false;
 
 			OptionSet os = new OptionSet ()
 			{
+				{ "h|?|help", "Displays the help", v => showHelp = true },
 				{ "r|repository=", "Github repository to consider.", r => options.Repository = r },
 				{ "t|token=", "Token to use to communicate with Github via OctoKit", t => options.Pat = t },
 				{ "d|days=", "Show mentions in last given Days (Default 14)", d => options.Days = Int32.Parse(d) },
@@ -31,12 +33,23 @@ namespace attigo
 				return;
 			}
 
+			if (showHelp) {
+				ShowHelp (os);
+				return;
+			}
+
 			options.Validate ();
 
 			var crossRefCount = await Issues.Create (options).Find ();
 			foreach (var issue in crossRefCount.OrderBy (x => x.ReferenceCount).Reverse ().Take (options.Count)) {
 				Console.WriteLine ($"{issue.ID} {issue.Title} {issue.ReferenceCount}");
 			}
+		}
+
+		static void ShowHelp (OptionSet os)
+		{
+			Console.WriteLine ("attigo [options] path");
+			os.WriteOptionDescriptions (Console.Out);
 		}
 	}
 }
