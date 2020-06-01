@@ -17,10 +17,11 @@ namespace attigo
 
 			OptionSet os = new OptionSet ()
 			{
-				{ "r|repository=", "Github repository to consider.", b => options.Repository = b },
+				{ "r|repository=", "Github repository to consider.", r => options.Repository = r },
 				{ "t|token=", "Token to use to communicate with Github via OctoKit", t => options.Pat = t },
 				{ "d|days=", "Show mentions in last given Days (Default 14)", d => options.Days = Int32.Parse(d) },
 				{ "l|label=", "Show mentions on issues with given Label (Default ci-failure)", l => options.Label = l },
+				{ "c|count=", "Show given top cross referenced items (Default 10)", c => options.Count = Int32.Parse (c) },
 			};
 
 			try {
@@ -32,9 +33,8 @@ namespace attigo
 
 			options.Validate ();
 
-			var issues = new Issues (options);
-			var crossRefCount = await issues.Find ();
-			foreach (var issue in crossRefCount.OrderBy (x => x.ReferenceCount).Reverse ().Take (10)) {
+			var crossRefCount = await Issues.Create (options).Find ();
+			foreach (var issue in crossRefCount.OrderBy (x => x.ReferenceCount).Reverse ().Take (options.Count)) {
 				Console.WriteLine ($"{issue.ID} {issue.Title} {issue.ReferenceCount}");
 			}
 		}

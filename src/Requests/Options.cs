@@ -10,6 +10,7 @@ namespace attigo.Requests
 	{
 		public string Repository = null;
 		public string Pat = null;
+		public int Count = 10;
 		public int Days = 14;
 		public string Label = "ci-failure";
 

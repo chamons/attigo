@@ -25,6 +25,8 @@ namespace attigo.Requests
 			(Owner, Area) = ParseLocation (Options.Repository);
 		}
 
+		public static Issues Create (RequestOptions options) => new Issues (options);
+
 		public async Task AssertLimits ()
 		{
 			var limits = await Client.Miscellaneous.GetRateLimits ();
@@ -59,11 +61,15 @@ namespace attigo.Requests
 		async Task<ReferenceInfo> ParseIssueTimeline (Issue issue)
 		{
 			var timeline = await Client.Issue.Timeline.GetAllForIssue (Owner, Area, issue.Number);
+			var date = DateTime.Now.AddDays (-Options.Days);
 
 			int crossRefCount = 0;
 			foreach (var x in timeline) {
 				if (x.Event.TryParse (out EventInfoState eventState) && eventState == EventInfoState.Crossreferenced) {
-					crossRefCount++;
+					// date is earlier than x.CreatedAt
+					if (DateTimeOffset.Compare (date, x.CreatedAt) < 0) {
+						crossRefCount++;
+					}
 				}
 			}
 
